@@ -1,19 +1,54 @@
 # Welcome to your Expo app 👋
 
+## Shared design system
+
+See [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) for tokens, Inter typography,
+component contracts, and usage rules. Import shared primitives from
+`@/components/ui`. Open **View design system** from the development home screen
+to inspect the catalogue and try component states.
+
+## NativeWind v5
+
+Styling uses NativeWind `5.0.0-rc.0`, `react-native-css` `3.1.0-rc.0`, and
+Tailwind CSS `4.1.12`, following the [v5 installation guide](https://www.nativewind.dev/v5/getting-started/installation).
+
+From the repository root, install with `pnpm install` and start with `pnpm mobile`.
+After changing Metro or PostCSS configuration, use `pnpm --filter mobile start --clear`.
+
+Use `className` on React Native components. Global styles and Tailwind theme
+customization belong in `global.css`, which is imported once by `src/app/_layout.tsx`.
+Metro integration is in `metro.config.js`; Tailwind runs through `postcss.config.mjs`.
+The workspace pins Lightning CSS to `1.30.1` in `pnpm-workspace.yaml`.
+
+Verify with `pnpm --filter mobile exec tsc --noEmit`, `pnpm --filter mobile lint`,
+and `pnpm --filter mobile exec expo install --check`.
+
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+
+## Expo SDK and Expo Go
+
+This app targets Expo SDK 58 (Expo 58.0.19, React Native 0.88, React 19.3).
+Use an SDK 58 compatible Expo Go build. Node.js 24.3+ on the 24 line is supported.
+After upgrading, restart Metro with `pnpm --filter mobile start --clear`.
+
+The pnpm patch in `patches/react-native-css@3.1.0-rc.0.patch` forwards React
+Native 0.88's `AssetRegistry` through NativeWind's component wrapper. Without it,
+Expo font loading crashes with `getAssetByID` on Android/iOS. Keep the patch until
+the installed react-native-css version forwards this export itself. Verify with
+`node --test apps/mobile/scripts/asset-registry.test.cjs` from the repository root.
 
 ## Get started
 
 1. Install dependencies
 
    ```bash
-   npm install
+   pnpm install
    ```
 
 2. Start the app
 
    ```bash
-   npx expo start
+   pnpm mobile
    ```
 
 In the output, you'll find options to open the app in a
