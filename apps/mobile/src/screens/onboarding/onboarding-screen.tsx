@@ -38,7 +38,7 @@ function PhotoShade() {
 }
 
 export default function OnboardingScreen() {
-  const { step } = useLocalSearchParams<{ step?: string }>();
+  const { step, replay } = useLocalSearchParams<{ step?: string; replay?: string }>();
   const parsed = Number(step ?? 0);
   const initial = Number.isInteger(parsed) ? Math.max(0, Math.min(3, parsed)) : 0;
   const [visit, setVisit] = useState<OnboardingVisit>();
@@ -48,7 +48,7 @@ export default function OnboardingScreen() {
     return () => { mounted = false; };
   }, []);
   if (!visit) return <View className="flex-1 items-center justify-center bg-onboarding-paper"><Stack.Screen options={{ headerShown: false }} /><Text variant="caption" tone="muted" accessibilityRole="progressbar">Getting ready…</Text></View>;
-  if (visit.completed) return <Redirect href={visit.entry} />;
+  if (visit.completed && replay !== "1") return <Redirect href={visit.entry} />;
   return <OnboardingPager key={initial} initial={initial} storageAvailable={visit.storageAvailable} />;
 }
 

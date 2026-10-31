@@ -9,14 +9,21 @@ import {
   View,
   useWindowDimensions,
 } from "react-native";
-import { Link, Stack, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  Link,
+  Redirect,
+  Stack,
+  useLocalSearchParams,
+  useRouter,
+} from "expo-router";
+import { useAuth, useSignIn, useSignUp, useSSO } from "@clerk/expo";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import Svg, { Path } from "react-native-svg";
 import { Icon, StatusAlert, Text, TextField } from "@/components/ui";
 import { WelcomeLogo } from "@/components/ui/welcome-logo";
 import { rememberAuthEntry } from "@/screens/onboarding/onboarding-storage";
-import { isPreviewEmail } from "@/fixtures/mock-email-confirmation";
+import { authErrorMessage, requireAuthSuccess } from "./clerk-errors";
 
 type Mode = "sign-up" | "sign-in";
 
@@ -61,8 +68,13 @@ function ProviderMark({
   );
 }
 
-// UI entry only. No credentials are submitted, persisted, or treated as a session.
 export function AuthEntryScreen({ mode }: { mode: Mode }) {
+  const { isLoaded, isSignedIn } = useAuth();
+  const { signUp } = useSignUp();
+  const { signIn } = useSignIn();
+  const { startSSOFlow } = useSSO();
+  const submitting = useRef(false);
+  const [busy, setBusy] = useState(false);
   const creating = mode === "sign-up";
   const { onboardingStorage } = useLocalSearchParams<{
     onboardingStorage?: string;
@@ -92,21 +104,49 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
       mounted = false;
     };
   }, [creating]);
-  const unavailable = (provider?: string) => {
+  const socialSignIn = async (provider: "Facebook" | "Google" | "Apple") => {
+    if (!isLoaded || submitting.current) return;
     Keyboard.dismiss();
     setValidationError(false);
-    setMessage(
-      provider
-        ? `${provider} sign-in is not connected yet. No account has been created or signed in.`
-        : "Authentication is not connected yet. Your details have not been sent or saved.",
-    );
+    setMessage(undefined);
+    submitting.current = true;
+    setBusy(true);
+    const strategies = {
+      Facebook: "oauth_facebook",
+      Google: "oauth_google",
+      Apple: "oauth_apple",
+    } as const;
+    try {
+      const result = await startSSOFlow({ strategy: strategies[provider] });
+      if (result.createdSessionId && result.setActive) {
+        await result.setActive({ session: result.createdSessionId });
+        router.replace("/home");
+      } else if (result.signUp?.status === "missing_requirements") {
+        setMessage(
+          "Your provider account needs additional details. Please use email sign-up or contact support.",
+        );
+      } else if (
+        result.signIn?.status === "needs_second_factor" ||
+        result.signIn?.status === "needs_client_trust"
+      ) {
+        setMessage(
+          "Your provider account requires additional verification. Please use email sign-in.",
+        );
+      }
+    } catch (error) {
+      setValidationError(true);
+      setMessage(authErrorMessage(error));
+    } finally {
+      submitting.current = false;
+      setBusy(false);
+    }
   };
-  const submit = () => {
-    if (!creating) return unavailable();
+  const submit = async () => {
+    if (!isLoaded || submitting.current) return;
     Keyboard.dismiss();
     const normalizedEmail = email.trim();
     setValidationError(true);
-    if (!isPreviewEmail(normalizedEmail)) {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
       setMessage("Enter a valid email address to continue.");
       return;
     }
@@ -114,11 +154,59 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
       setMessage("Enter a password to continue.");
       return;
     }
+    submitting.current = true;
+    setBusy(true);
     setMessage(undefined);
-    setValidationError(false);
-    setPassword("");
-    router.push({ pathname: "/confirm-email", params: { email: normalizedEmail } });
+    try {
+      if (creating) {
+        requireAuthSuccess(
+          await signUp.password({ emailAddress: normalizedEmail, password }),
+        );
+        if (signUp.missingFields.length > 0) {
+          setMessage(
+            "This account requires additional details. Please contact support to finish signing up.",
+          );
+          return;
+        }
+        requireAuthSuccess(await signUp.verifications.sendEmailCode());
+        setPassword("");
+        router.push({
+          pathname: "/confirm-email",
+          params: { flow: "sign-up" },
+        });
+      } else {
+        requireAuthSuccess(
+          await signIn.password({ identifier: normalizedEmail, password }),
+        );
+        if (signIn.status === "complete") {
+          requireAuthSuccess(await signIn.finalize());
+          setPassword("");
+          router.replace("/home");
+        } else if (
+          signIn.status === "needs_second_factor" ||
+          signIn.status === "needs_client_trust"
+        ) {
+          requireAuthSuccess(await signIn.mfa.sendEmailCode());
+          setPassword("");
+          router.push({
+            pathname: "/confirm-email",
+            params: { flow: "sign-in" },
+          });
+        } else {
+          setMessage(
+            "This account requires another sign-in step. Please contact support for help.",
+          );
+        }
+      }
+    } catch (error) {
+      setMessage(authErrorMessage(error));
+    } finally {
+      submitting.current = false;
+      setBusy(false);
+    }
   };
+
+  if (isSignedIn) return <Redirect href="/home" />;
 
   return (
     <KeyboardAvoidingView
@@ -141,7 +229,9 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
         alwaysBounceVertical={false}
         showsVerticalScrollIndicator={false}
         scrollEnabled={contentHeight > viewportHeight + 1}
-        onLayout={({ nativeEvent: { layout } }) => setViewportHeight(layout.height)}
+        onLayout={({ nativeEvent: { layout } }) =>
+          setViewportHeight(layout.height)
+        }
         onContentSizeChange={(_, height) => setContentHeight(height)}
         contentInsetAdjustmentBehavior="never"
         keyboardShouldPersistTaps="handled"
@@ -157,8 +247,22 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
           style={{ width: Math.min(contentWidth, 512), flexGrow: 1 }}
           className="px-xl"
         >
-          <View className={creating ? "h-lg" : "-ml-md h-14 justify-center"}>
-            {!creating ? (
+          <View className="-ml-md h-14 justify-center">
+            {creating ? (
+              <Pressable
+                onPress={() =>
+                  router.replace({ pathname: "/", params: { replay: "1" } })
+                }
+                disabled={busy}
+                accessibilityRole="button"
+                accessibilityState={{ disabled: busy }}
+                className="min-h-control-sm flex-row items-center gap-sm self-start rounded-full px-md active:opacity-60"
+              >
+                <View className="rotate-180">
+                  <Icon name="chevron" className="text-onboarding" />
+                </View>
+              </Pressable>
+            ) : (
               <Pressable
                 onPress={() => router.replace("/sign-up")}
                 accessibilityRole="button"
@@ -169,7 +273,7 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
                   <Icon name="chevron" className="text-onboarding-ink" />
                 </View>
               </Pressable>
-            ) : null}
+            )}
           </View>
           <View className="pb-xl pt-sm">
             <WelcomeLogo compact />
@@ -201,6 +305,7 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
               icon="mail"
               placeholder="Email address"
               value={email}
+              editable={!busy && isLoaded}
               onChangeText={setEmail}
               keyboardType="email-address"
               autoCapitalize="none"
@@ -217,6 +322,7 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
               icon="lock"
               placeholder="Password"
               value={password}
+              editable={!busy && isLoaded}
               onChangeText={setPassword}
               secureTextEntry
               autoCapitalize="none"
@@ -228,11 +334,17 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
             />
             <Pressable
               onPress={submit}
+              disabled={busy || !isLoaded}
+              accessibilityState={{ disabled: busy || !isLoaded, busy }}
               accessibilityRole="button"
               className="min-h-control-md items-center justify-center rounded-full bg-onboarding px-xl py-md active:opacity-70"
             >
               <Text variant="button" tone="inverse">
-                {creating ? "Create account" : "Sign In"}
+                {busy
+                  ? "Please wait…"
+                  : creating
+                    ? "Create account"
+                    : "Sign In"}
               </Text>
             </Pressable>
             {message ? (
@@ -243,6 +355,7 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
               />
             ) : null}
           </View>
+          <View nativeID="clerk-captcha" />
           <View className="flex-row items-center gap-lg pb-lg pt-xl">
             <View className="h-px flex-1 bg-outline/50" />
             <Text variant="caption" className="text-onboarding-muted">
@@ -254,7 +367,9 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
             {(["Facebook", "Google", "Apple"] as const).map((provider) => (
               <Pressable
                 key={provider}
-                onPress={() => unavailable(provider)}
+                onPress={() => socialSignIn(provider)}
+                disabled={busy || !isLoaded}
+                accessibilityState={{ disabled: busy || !isLoaded, busy }}
                 accessibilityRole="button"
                 accessibilityLabel={`Continue with ${provider}`}
                 className={`h-control-md w-control-md items-center justify-center rounded-full border border-outline/50 active:opacity-60 ${provider === "Facebook" ? "bg-info" : provider === "Apple" ? "bg-ink" : "bg-white"}`}
@@ -268,10 +383,10 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
             className="pt-lg text-center text-onboarding-muted"
           >
             {creating
-              ? "Preview only — continue to a mock email confirmation. No account is created."
-              : "Preview only — authentication is not connected."}
+              ? "We'll email you a code to verify your account."
+              : "Sign in securely to your StayApp account."}
           </Text>
-          <View className="flex-1" style={{ minHeight: 16 }} />
+          <View className="flex-1" />
           <View className="flex-row flex-wrap items-center justify-center pt-lg">
             <Text variant="caption" className="text-onboarding-muted">
               {creating ? "Already have an account?" : "New to StayApp?"}

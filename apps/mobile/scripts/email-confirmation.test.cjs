@@ -7,7 +7,9 @@ const ts = require("typescript");
 
 // Exercise the real screen callbacks without adding a native test runtime.
 // This verifies form/navigation wiring; it does not simulate native touch delivery.
-function screen(name, params = {}) {
+function screen(name, params = {}, mode = "sign-up", overrides = {}) {
+  const ok = async () => ({ error: null });
+  const attempt = { status: "missing_requirements", missingFields: [], emailAddress: "guest@example.com", identifier: "guest@example.com", password: ok, verifications: { sendEmailCode: ok, verifyEmailCode: ok }, mfa: { sendEmailCode: ok, verifyEmailCode: ok }, finalize: ok, ...overrides };
   const state = [];
   const pushes = [];
   let cursor = 0;
@@ -31,10 +33,11 @@ function screen(name, params = {}) {
   }, { get: (target, key) => target[key] ?? key });
   const modules = {
     react,
+    "@clerk/expo": { useSSO: () => ({ startSSOFlow: async () => ({ createdSessionId: null }) }), useAuth: () => ({ isLoaded: true, isSignedIn: false }), useSignUp: () => ({ signUp: attempt }), useSignIn: () => ({ signIn: attempt }), isClerkAPIResponseError: error => Array.isArray(error?.errors) },
     "react/jsx-runtime": { jsx, jsxs: jsx },
     "react-native": native,
     "expo-router": {
-      useRouter: () => ({ push: route => pushes.push(route), replace() {} }),
+      useRouter: () => ({ push: route => pushes.push(route), replace: route => pushes.push(route) }),
       useLocalSearchParams: () => params,
       useFocusEffect() {}, Stack: { Screen: "StackScreen" }, Link: "Link",
     },
@@ -56,11 +59,11 @@ function screen(name, params = {}) {
     } });
     return exports;
   }
-  modules["@/fixtures/mock-email-confirmation"] = load("fixtures/mock-email-confirmation.ts");
+  modules["./clerk-errors"] = load("screens/auth/clerk-errors.ts");
   const component = load(`screens/auth/${name}.tsx`);
   function render() {
     cursor = 0;
-    const tree = name === "auth-entry-screen" ? component.AuthEntryScreen({ mode: "sign-up" }) : component.default();
+    const tree = name === "auth-entry-screen" ? component.AuthEntryScreen({ mode }) : component.default();
     const nodes = [];
     function visit(node) {
       if (Array.isArray(node)) return node.forEach(visit);
@@ -71,34 +74,63 @@ function screen(name, params = {}) {
     visit(tree);
     return nodes;
   }
-  return { render, pushes };
+  return { render, pushes, attempt };
 }
 
-test("Create account validates input then routes the entered email without the password", () => {
-  const app = screen("auth-entry-screen");
-  const submit = nodes => nodes.find(node => node.type === "Pressable" && node.props.onPress &&
-    node.props.children?.props?.children === "Create account").props.onPress();
-  submit(app.render());
-  assert.equal(app.pushes.length, 0);
+const fill = (app, label, value) => app.render().find(node => node.type === "TextField" && node.props.label === label).props.onChangeText(value);
+const submitEntry = app => app.render().find(node => node.type === "Pressable" && node.props.children?.props?.children === "Create account").props.onPress();
+const submitCode = app => app.render().find(node => node.type === "Button" && node.props.title === "Confirm email").props.onPress();
+
+test("sign-up validates then sends credentials only to Clerk and routes without secrets", async () => {
+  const calls = [];
+  const app = screen("auth-entry-screen", {}, "sign-up", { password: async data => { calls.push(data); return { error: null }; } });
+  await submitEntry(app);
   assert.match(app.render().find(node => node.type === "StatusAlert").props.message, /valid email/);
-  app.render().find(node => node.type === "TextField" && node.props.label === "Email address").props.onChangeText("guest@example.com");
-  submit(app.render());
-  assert.equal(app.pushes.length, 0);
+  fill(app, "Email address", "guest@example.com");
+  await submitEntry(app);
   assert.match(app.render().find(node => node.type === "StatusAlert").props.message, /password/);
-  app.render().find(node => node.type === "TextField" && node.props.label === "Password").props.onChangeText("preview-password");
-  submit(app.render());
-  assert.equal(JSON.stringify(app.pushes), JSON.stringify([{ pathname: "/confirm-email", params: { email: "guest@example.com" } }]));
+  fill(app, "Password", "a-long-test-password");
+  await submitEntry(app);
+  assert.equal(calls.length, 1);
+  assert.equal(calls[0].password, "a-long-test-password");
+  assert.equal(JSON.stringify(app.pushes), JSON.stringify([{ pathname: "/confirm-email", params: { flow: "sign-up" } }]));
 });
 
-test("Confirmation rejects incomplete/wrong codes and pushes Home once for the correct code", () => {
-  const app = screen("confirm-email-screen", { email: "guest@example.com" });
-  const enter = value => app.render().find(node => node.type === "TextField").props.onChangeText(value);
-  const submit = () => app.render().find(node => node.type === "Button" && node.props.title === "Confirm email").props.onPress();
-  enter("12"); submit();
-  assert.match(app.render().find(node => node.type === "TextField").props.error, /all six/);
-  enter("999999"); submit();
-  assert.match(app.render().find(node => node.type === "TextField").props.error, /doesn't match/);
+test("verification rejects incomplete and API-rejected codes; only Clerk completion reaches Home", async () => {
+  let count = 0;
+  const app = screen("confirm-email-screen", {}, "sign-up", { verifications: { sendEmailCode: async () => ({ error: null }), verifyEmailCode: async ({ code }) => {
+    count++;
+    if (code !== "654321") return { error: { errors: [{ message: "Code is invalid or expired" }] } };
+    app.attempt.status = "complete";
+    return { error: null };
+  } } });
+  fill(app, "Six-digit confirmation code", "12"); await submitCode(app);
+  assert.equal(count, 0);
+  fill(app, "Six-digit confirmation code", "123456"); await submitCode(app);
+  assert.match(app.render().find(node => node.type === "TextField").props.error, /invalid or expired/);
   assert.equal(app.pushes.length, 0);
-  enter("123456"); submit(); submit();
+  fill(app, "Six-digit confirmation code", "654321");
+  await Promise.all([submitCode(app), submitCode(app)]);
   assert.deepEqual(app.pushes, ["/home"]);
+});
+
+test("failed sign-up stays on the form with Clerk feedback", async () => {
+  const app = screen("auth-entry-screen", {}, "sign-up", { password: async () => ({ error: { errors: [{ message: "Password is too short" }] } }) });
+  fill(app, "Email address", "guest@example.com"); fill(app, "Password", "short");
+  await submitEntry(app);
+  assert.deepEqual(app.pushes, []);
+  assert.match(app.render().find(node => node.type === "StatusAlert").props.message, /too short/);
+});
+
+test("new-device sign-in sends a code and uses the sign-in verification flow", async () => {
+  const app = screen("auth-entry-screen", {}, "sign-in", { status: "needs_client_trust" });
+  fill(app, "Email address", "guest@example.com"); fill(app, "Password", "a-long-test-password");
+  await app.render().find(node => node.type === "Pressable" && node.props.children?.props?.children === "Sign In").props.onPress();
+  assert.equal(JSON.stringify(app.pushes), JSON.stringify([{ pathname: "/confirm-email", params: { flow: "sign-in" } }]));
+});
+
+test("direct confirmation without a pending attempt offers restart", () => {
+  const app = screen("confirm-email-screen", {}, "sign-up", { status: "needs_identifier", emailAddress: null });
+  assert.equal(app.render().some(node => node.type === "TextField"), false);
+  assert.ok(app.render().find(node => node.type === "Button" && node.props.title === "Go to sign up"));
 });

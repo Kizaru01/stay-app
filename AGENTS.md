@@ -13,7 +13,7 @@ React Native + Expo
         ↓
      Laravel
         ↓
-    Eloquent
+     Eloquent
         ↓
    PostgreSQL
 ```
@@ -81,7 +81,7 @@ The API is the authoritative source for business rules.
 
 PostgreSQL is the application's primary persistent data store.
 
-Use database constraints and transactions where they are necessary to protect data integrity.
+Use database constraints and transactions where necessary to protect data integrity.
 
 ### Clerk
 
@@ -100,7 +100,7 @@ Before modifying code:
 1. Inspect the relevant existing implementation.
 2. Understand the current architecture and conventions.
 3. Reuse existing patterns when appropriate.
-4. Only introduce a new pattern when the existing patterns cannot reasonably solve the problem.
+4. Only introduce a new pattern when existing patterns cannot reasonably solve the problem.
 
 Do not assume the repository is empty simply because a feature has not been implemented yet.
 
@@ -133,7 +133,7 @@ Server-side validation and authorization protect the system.
 
 ### Keep Temporary Implementations Explicit
 
-During feature development, static or mock data may be used intentionally.
+Static or mock data may be used intentionally during feature development.
 
 Temporary data must be clearly identified as temporary.
 
@@ -153,33 +153,49 @@ Mobile API integration
 
 Do not silently leave production features dependent on mock data.
 
-## Feature Development Workflow
+## Feature Workflow
 
-Features should normally be developed incrementally.
+Use this workflow for a new feature, system, or change across several files.
 
-A feature may be divided into multiple implementation steps.
+Small fixes, dependency setup, maintenance tasks, and questions may skip this workflow.
 
-A common workflow is:
+1. **Understand.**
+   - Read the relevant code and applicable `AGENTS.md` files.
+   - Read an existing feature plan only when the task directly builds on it.
+   - Read current documentation for APIs or libraries involved when needed.
+   - Load and follow a relevant skill when one exists.
+   - Do not rely on remembered version-specific APIs when current documentation or a skill is available.
 
-```text
-Feature plan
-    ↓
-Mobile UI with static data
-    ↓
-Verify mobile
-    ↓
-Laravel API
-    ↓
-Verify API
-    ↓
-Connect mobile to API
-    ↓
-End-to-end verification
-```
+2. **Ask.**
+   - Ask when a real product or architectural decision is unclear.
+   - Batch related questions when possible.
+   - Choose reasonable defaults for minor implementation details and record important decisions in the plan.
+   - Do not silently change an existing project decision.
 
-The mobile and API do not have to be implemented in a single task.
+3. **Plan.**
+   - Read `prompts/TEMPLATE.md`.
+   - Copy it to `prompts/NN-feature-name.md` using the next available number.
+   - Make the plan self-contained enough that a fresh session can implement it using the repository instructions and the plan.
+   - Break implementation into small, independently verifiable steps.
 
-Prefer separate implementation steps when this makes the feature easier to understand, test, and debug.
+4. **Stop and wait.**
+   - Do not modify application code before the plan is approved.
+   - Present the plan for approval.
+   - If changes are requested, update the plan and ask again.
+   - When approved, set `Status: approved`.
+
+5. **Build.**
+   - Implement the approved plan one step at a time.
+   - Verify each step before continuing.
+   - Do not automatically continue to the next step.
+   - If a step reveals a significant architectural or product problem, stop and explain it instead of silently redesigning the plan.
+
+6. **Close out.**
+   - Run the verification defined by the plan.
+   - Add a short `## Result` section to the plan.
+   - Set `Status: done`.
+   - If implementation establishes a lasting project rule, update the appropriate `AGENTS.md`.
+   - Do not turn `AGENTS.md` into a feature history or changelog.
 
 ## Feature Plans
 
@@ -189,9 +205,13 @@ Feature plans belong in:
 /prompts/
 ```
 
-Feature plans describe what is being built.
+Start every feature plan from:
 
-They should contain:
+```text
+/prompts/TEMPLATE.md
+```
+
+Feature plans should contain:
 
 - Goal
 - Decisions
@@ -202,25 +222,11 @@ They should contain:
 
 `AGENTS.md` contains persistent engineering rules.
 
-`prompts/*.md` contains feature-specific decisions and plans.
+`prompts/*.md` contains feature-specific decisions and implementation plans.
+
+Do not modify `TEMPLATE.md` for an individual feature.
 
 Do not put temporary feature requirements into `AGENTS.md`.
-
-## Agent Workflow
-
-When given a development task:
-
-1. Read the applicable `AGENTS.md` instructions.
-2. Inspect the existing code relevant to the task.
-3. Read the applicable feature plan under `/prompts/` when one exists.
-4. Identify which application(s) are affected.
-5. Explain or establish the implementation approach when architectural decisions are involved.
-6. Implement only the requested scope.
-7. Verify the implementation using the appropriate checks.
-8. Report what was changed and what was verified.
-9. If implementation establishes a new permanent architectural rule, propose an update to the appropriate `AGENTS.md`.
-
-Do not claim work is complete when the relevant verification has not been performed.
 
 ## Scope Control
 
@@ -262,16 +268,14 @@ Do not rely on hidden UI elements or client-side checks as security mechanisms.
 
 Verification should match the scope of the task.
 
-Examples:
-
-Mobile:
+### Mobile
 
 - TypeScript checks
 - linting
 - Expo checks
 - relevant manual UI verification
 
-API:
+### API
 
 - Laravel tests
 - PHP formatting
@@ -279,7 +283,7 @@ API:
 - database/migration verification
 - API endpoint testing
 
-Integration:
+### Integration
 
 - mobile → API request
 - authentication
