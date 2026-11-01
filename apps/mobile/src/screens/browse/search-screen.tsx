@@ -36,7 +36,7 @@ export default function SearchScreen() {
       </View>
       <Text variant="caption" className="text-onboarding-muted">Sample stays · Illustrative photos, prices and reviews</Text>
     </View>
-    <FlatList data={results} keyExtractor={property => property.id} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerClassName="px-xl pb-2xl gap-xl" renderItem={({ item }) => <ListingCard listing={item} favorite={savedIds.has(item.id)} onFavoriteChange={saved => setSaved(item.id, saved)} />} ListEmptyComponent={<View className="items-center gap-lg py-2xl">
+    <FlatList data={results} keyExtractor={property => property.id} keyboardShouldPersistTaps="handled" keyboardDismissMode="on-drag" contentContainerClassName="px-xl pb-2xl gap-xl" renderItem={({ item }) => <ListingCard onPress={() => router.push({ pathname: "/property/[id]", params: { id: item.id } })} listing={item} favorite={savedIds.has(item.id)} onFavoriteChange={saved => setSaved(item.id, saved)} />} ListEmptyComponent={<View className="items-center gap-lg py-2xl">
       <Icon name="search" size="lg" className="text-onboarding-muted" />
       <Text variant="heading2" accessibilityRole="header" className="text-center text-onboarding-ink">No stays found</Text>
       <Text className="text-center text-onboarding-muted">Try another destination or a wider price range.</Text>

@@ -5,6 +5,14 @@ import Svg, { Path } from "react-native-svg";
 export const ThemedSvg = styled(Svg, { className: { target: "style", nativeStyleMapping: { color: "color" } } });
 
 const paths = {
+  parking: "M3 21V8l3-5h12l3 5v13M3 9h18M3 17h18M6 13h2m8 0h2M6 21v-4m12 4v-4",
+  kitchen: "M4 2h16v20H4ZM4 8h16M8 5h.01M16 5h.01M8 12h8v6H8Z",
+  tv: "M2 3h20v15H2ZM12 18v4m-5 0h10",
+  bath: "M2 12h20M4 12v4a5 5 0 0 0 5 5h6a5 5 0 0 0 5-5v-4M6 12V5a3 3 0 0 1 6 0M8 5h6M7 21v1m10-1v1",
+  users: "M15 7a3 3 0 1 1-6 0 3 3 0 0 1 6 0M5 22v-3a7 7 0 0 1 14 0v3M3 12a3 3 0 0 0 0-6m18 6a3 3 0 0 0 0-6M1 21v-4l2-2m20 6v-4l-2-2",
+  clock: "M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0M12 6v6l4 2",
+  coffee: "M3 3h14v12a5 5 0 0 1-5 5H8a5 5 0 0 1-5-5ZM17 5h2a3 3 0 0 1 0 6h-2M2 23h18",
+  waves: "M2 7q3-4 7 0t7 0 6 0M2 13q3-4 7 0t7 0 6 0M2 19q3-4 7 0t7 0 6 0",
   check: "M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0ZM7 12l3 3 7-7",
   alert: "M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0ZM12 7v6m0 4h.01",
   info: "M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0ZM12 11v6m0-10h.01",

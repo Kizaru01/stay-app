@@ -35,7 +35,7 @@ export function ListingCard({ listing, variant = "grid", favorite, onFavoriteCha
   const horizontal = variant === "horizontal";
   if (variant === "home") return <View {...props} className={`relative gap-sm ${className}`} style={style}>
     <PropertyPhotoGallery photos={listing.photos} source={listing.image} description={listing.imageDescription} title={listing.title} />
-    <Text variant="bodySmall" className="font-inter-semibold text-onboarding-ink">{listing.title}</Text>
+    <Pressable onPress={onPress} disabled={!onPress} accessibilityRole={onPress ? "button" : undefined} accessibilityLabel={`View ${listing.title}`} className="min-h-control-md justify-center rounded-sm active:opacity-70 focus-visible:outline-2 focus-visible:outline-focus"><Text variant="bodySmall" className="font-inter-semibold text-onboarding-ink">{listing.title}</Text></Pressable>
     {listing.guests !== undefined && listing.bedrooms !== undefined ? <Text variant="caption" className="text-onboarding-muted">{listing.guests} guests · {listing.bedrooms} {listing.bedrooms === 1 ? "bedroom" : "bedrooms"}</Text> : null}
     <View className="flex-row flex-wrap items-center gap-x-sm gap-y-xs">
       <View className="flex-row items-center gap-xs shrink"><Icon name="pin" size="sm" className="text-onboarding-muted" /><Text variant="caption" className="text-onboarding-muted shrink">{listing.location}</Text></View>
