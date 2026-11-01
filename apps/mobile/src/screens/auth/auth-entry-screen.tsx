@@ -86,6 +86,8 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
   const [viewportHeight, setViewportHeight] = useState(window.height);
   const [contentHeight, setContentHeight] = useState(0);
   const passwordInput = useRef<TextInputInstance>(null);
+  const emailInput = useRef<TextInputInstance>(null);
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string>();
@@ -146,6 +148,10 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
     Keyboard.dismiss();
     const normalizedEmail = email.trim();
     setValidationError(true);
+    if (creating && !name.trim()) {
+      setMessage("Enter your name to continue.");
+      return;
+    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
       setMessage("Enter a valid email address to continue.");
       return;
@@ -160,7 +166,7 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
     try {
       if (creating) {
         requireAuthSuccess(
-          await signUp.password({ emailAddress: normalizedEmail, password }),
+          await signUp.password({ firstName: name.trim(), emailAddress: normalizedEmail, password }),
         );
         if (signUp.missingFields.length > 0) {
           setMessage(
@@ -299,7 +305,25 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
                 onDismiss={() => setStorageNotice(false)}
               />
             ) : null}
+            {creating ? (
+              <TextField
+                label="Name"
+                labelHidden
+                icon="user"
+                placeholder="Name"
+                value={name}
+                editable={!busy && isLoaded}
+                onChangeText={setName}
+                autoCapitalize="words"
+                autoCorrect={false}
+                autoComplete="name"
+                textContentType="name"
+                returnKeyType="next"
+                onSubmitEditing={() => emailInput.current?.focus()}
+              />
+            ) : null}
             <TextField
+              ref={emailInput}
               label="Email address"
               labelHidden
               icon="mail"

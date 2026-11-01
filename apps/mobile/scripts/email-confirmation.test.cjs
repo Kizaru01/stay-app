@@ -85,6 +85,13 @@ test("sign-up validates then sends credentials only to Clerk and routes without 
   const calls = [];
   const app = screen("auth-entry-screen", {}, "sign-up", { password: async data => { calls.push(data); return { error: null }; } });
   await submitEntry(app);
+  assert.match(app.render().find(node => node.type === "StatusAlert").props.message, /your name/);
+  fill(app, "Name", "   ");
+  await submitEntry(app);
+  assert.equal(calls.length, 0);
+  assert.match(app.render().find(node => node.type === "StatusAlert").props.message, /your name/);
+  fill(app, "Name", "  María 李  ");
+  await submitEntry(app);
   assert.match(app.render().find(node => node.type === "StatusAlert").props.message, /valid email/);
   fill(app, "Email address", "guest@example.com");
   await submitEntry(app);
@@ -92,6 +99,7 @@ test("sign-up validates then sends credentials only to Clerk and routes without 
   fill(app, "Password", "a-long-test-password");
   await submitEntry(app);
   assert.equal(calls.length, 1);
+  assert.equal(calls[0].firstName, "María 李");
   assert.equal(calls[0].password, "a-long-test-password");
   assert.equal(JSON.stringify(app.pushes), JSON.stringify([{ pathname: "/confirm-email", params: { flow: "sign-up" } }]));
 });
@@ -116,6 +124,7 @@ test("verification rejects incomplete and API-rejected codes; only Clerk complet
 
 test("failed sign-up stays on the form with Clerk feedback", async () => {
   const app = screen("auth-entry-screen", {}, "sign-up", { password: async () => ({ error: { errors: [{ message: "Password is too short" }] } }) });
+  fill(app, "Name", "Alex");
   fill(app, "Email address", "guest@example.com"); fill(app, "Password", "short");
   await submitEntry(app);
   assert.deepEqual(app.pushes, []);
@@ -124,6 +133,7 @@ test("failed sign-up stays on the form with Clerk feedback", async () => {
 
 test("new-device sign-in sends a code and uses the sign-in verification flow", async () => {
   const app = screen("auth-entry-screen", {}, "sign-in", { status: "needs_client_trust" });
+  assert.equal(app.render().some(node => node.type === "TextField" && node.props.label === "Name"), false);
   fill(app, "Email address", "guest@example.com"); fill(app, "Password", "a-long-test-password");
   await app.render().find(node => node.type === "Pressable" && node.props.children?.props?.children === "Sign In").props.onPress();
   assert.equal(JSON.stringify(app.pushes), JSON.stringify([{ pathname: "/confirm-email", params: { flow: "sign-in" } }]));

@@ -31,7 +31,9 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <Stack screenOptions={{ headerTitleStyle: { fontFamily: "Inter_600SemiBold" }, headerShadowVisible: false }} />
+      <Stack screenOptions={{ headerTitleStyle: { fontFamily: "Inter_600SemiBold" }, headerShadowVisible: false }}>
+        <Stack.Screen name="(browse)" options={{ headerShown: false }} />
+      </Stack>
     </ClerkProvider>
   );
 }

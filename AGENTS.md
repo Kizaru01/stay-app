@@ -97,11 +97,21 @@ Do not treat authentication and authorization as the same responsibility.
 
 Before modifying code:
 
-1. Inspect the relevant existing implementation.
-2. Understand the current architecture and conventions.
-3. Reuse existing patterns when appropriate.
-4. Only introduce a new pattern when existing patterns cannot reasonably solve the problem.
+## Development Workflow
 
+Before modifying code:
+
+1. Read and follow all applicable AGENTS.md instructions.
+2. Identify relevant Agent Skills and activate those applicable to the task.
+3. Inspect the relevant existing implementation.
+4. Understand the current architecture, dependencies, and conventions.
+5. Reuse existing patterns when appropriate.
+6. Only introduce a new pattern when existing patterns cannot reasonably solve the problem.
+7. Identify affected application boundaries and integration points.
+8. Establish an implementation plan before making changes.
+9. Preserve existing architectural decisions and conventions.
+10. Implement only the changes required by the task.
+11. Run appropriate verification and tests.
 Do not assume the repository is empty simply because a feature has not been implemented yet.
 
 ### Prefer Simplicity
