@@ -50,6 +50,10 @@
   --font-inter-medium: "Inter_500Medium";
   --font-inter-semibold: "Inter_600SemiBold";
   --font-inter-bold: "Inter_700Bold";
+  --font-lora-regular: "Lora_400Regular";
+  --font-lora-medium: "Lora_500Medium";
+  --font-lora-semibold: "Lora_600SemiBold";
+  --font-lora-bold: "Lora_700Bold";
 
   /* Explicit pixels keep the 4-point grid identical on native and web. */
   --spacing: 4px;
@@ -77,6 +81,18 @@
   --default-transition-duration: 150ms;
 }
 
+@utility font-lora-regular {
+  font-family: var(--font-lora-regular);
+}
+@utility font-lora-medium {
+  font-family: var(--font-lora-medium);
+}
+@utility font-lora-semibold {
+  font-family: var(--font-lora-semibold);
+}
+@utility font-lora-bold {
+  font-family: var(--font-lora-bold);
+}
 @utility type-display {
   font-family: var(--font-inter-bold);
   font-size: 40px;
@@ -137,4 +153,93 @@
   border-curve: continuous;
   padding: var(--spacing-lg);
   gap: var(--spacing-md);
+}
+
+/* NativeTabs owns routing and semantics. Its web fallback needs an in-flow
+   bottom row; decorative vector masks add no extra accessibility nodes. */
+@media screen {
+  .browse-tabs [role="tablist"] {
+    position: relative;
+    inset: auto;
+    transform: none;
+    order: 2;
+    flex-shrink: 0;
+    width: 100%;
+    max-width: none;
+    height: auto;
+    min-height: var(--spacing-control-lg);
+    border-radius: 0;
+    border: 0;
+    box-shadow: none;
+    padding: var(--spacing-xs) max(var(--spacing-xs), env(safe-area-inset-right)) max(var(--spacing-xs), env(safe-area-inset-bottom)) max(var(--spacing-xs), env(safe-area-inset-left));
+    background-color: var(--color-onboarding-paper);
+    overflow: visible;
+  }
+  .browse-tabs [role="tab"] {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xs);
+    min-width: 0;
+    min-height: var(--spacing-control-lg);
+    height: auto;
+    padding: var(--spacing-xs);
+    border-radius: 0;
+    background: transparent;
+    color: var(--color-onboarding-muted);
+    transition: color 150ms var(--ease-standard), opacity 150ms var(--ease-standard);
+  }
+  .browse-tabs [role="tab"]::before {
+    content: "";
+    display: block;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    background-color: currentColor;
+    mask: var(--browse-tab-icon) center / contain no-repeat;
+    -webkit-mask: var(--browse-tab-icon) center / contain no-repeat;
+  }
+  .browse-tabs [role="tab"] span {
+    white-space: normal;
+    overflow-wrap: anywhere;
+    font-family: var(--font-inter-regular);
+    font-size: 11px;
+    line-height: 16px;
+    color: inherit;
+  }
+  .browse-tabs [role="tab"][data-state="active"] {
+    background: transparent;
+    color: var(--color-onboarding);
+  }
+  .browse-tabs [role="tab"][data-state="active"] span {
+    color: inherit;
+    font-family: var(--font-inter-semibold);
+    font-size: 11px;
+  }
+  .browse-tabs [role="tab"]:active { opacity: 0.65; }
+  .browse-tabs [role="tab"]:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+  }
+  .browse-tabs [role="tabpanel"] { min-height: 0; }
+  .browse-tabs [role="tab"][aria-controls$="-content-home"] {
+    --browse-tab-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3%2010%2012%202l9%208v11h-6v-7H9v7H3Z%22%2F%3E%3C%2Fsvg%3E");
+  }
+  .browse-tabs [role="tab"][aria-controls$="-content-wishlist"] {
+    --browse-tab-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M20.8%204.6a5.5%205.5%200%200%200-7.8%200L12%205.7l-1.1-1.1a5.5%205.5%200%200%200-7.8%207.8L12%2021l8.8-8.6a5.5%205.5%200%200%200%200-7.8Z%22%2F%3E%3C%2Fsvg%3E");
+  }
+  .browse-tabs [role="tab"][aria-controls$="-content-trips"] {
+    --browse-tab-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3%207h18v14H3ZM8%207V3h8v4M8%207v14M16%207v14%22%2F%3E%3C%2Fsvg%3E");
+  }
+  .browse-tabs [role="tab"][aria-controls$="-content-messages"] {
+    --browse-tab-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M3%203h18v14H8l-5%204ZM7%208h10M7%2012h7%22%2F%3E%3C%2Fsvg%3E");
+  }
+  .browse-tabs [role="tab"][aria-controls$="-content-profile"] {
+    --browse-tab-icon: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20stroke%3D%22black%22%20stroke-width%3D%221.8%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M16%206a4%204%200%201%201-8%200%204%204%200%200%201%208%200M4%2022v-2a8%208%200%200%201%2016%200v2%22%2F%3E%3C%2Fsvg%3E");
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .browse-tabs [role="tab"] { transition: none; }
 }
