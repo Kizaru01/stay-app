@@ -64,7 +64,7 @@ export function SearchBar({
             setFocused(false);
             onBlur?.(event);
           }}
-          className={`${supportingText ? "type-button font-inter-semibold text-onboarding-ink placeholder:text-onboarding-ink py-0" : "type-body-sm min-h-control-md placeholder:text-muted py-xs"} min-w-0 outline-none ${disabled ? "text-disabled-ink" : "text-ink"}`}
+          className={`${supportingText ? "type-button text-onboarding-ink placeholder:text-onboarding-ink py-0" : "type-body-sm min-h-control-md placeholder:text-muted py-xs"} min-w-0 outline-none ${disabled ? "text-disabled-ink" : "text-ink"}`}
         />
         {supportingText ? (
           <Text variant="caption" className="text-onboarding-muted">

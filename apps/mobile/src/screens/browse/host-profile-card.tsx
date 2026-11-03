@@ -16,33 +16,33 @@ export function HostProfileCard({ host }: { host: SampleHost }) {
         />
         <View className="items-center gap-sm">
           <Text
-            variant="heading1"
+            variant="personNameLarge"
             accessibilityRole="header"
-            className="font-lora-bold text-onboarding-ink text-center"
+            className="text-onboarding-ink text-center"
           >
             {host.name}
           </Text>
-          <Text className="font-lora-regular text-onboarding-muted text-center">
+          <Text className="text-onboarding-muted text-center">
             Your host in {host.location}
           </Text>
           {host.superhost ? <Badge label="Superhost" variant="superhost" /> : null}
-          <Text variant="bodySmall" className="font-lora-medium text-onboarding">
+          <Text variant="metadataLarge" className="text-onboarding">
             {host.yearsHosting} {host.yearsHosting === 1 ? "year" : "years"} hosting
           </Text>
         </View>
       </Surface>
 
       <View className="rounded-lg bg-canvas p-lg gap-xs">
-        <Text variant="buttonSmall" className="font-lora-semibold text-onboarding-ink">
+        <Text variant="label" className="text-onboarding-ink">
           Sample host profile
         </Text>
-        <Text variant="caption" className="font-lora-regular text-onboarding-muted">
+        <Text variant="caption" className="text-onboarding-muted">
           Background, credentials and badges are illustrative and have not been verified.
         </Text>
       </View>
 
       <DetailSection title={`About ${host.name}`}>
-        <Text className="font-lora-regular text-onboarding-muted">{host.bio}</Text>
+        <Text className="text-onboarding-muted">{host.bio}</Text>
         <View>
           <DetailItem icon="pin" label={`Lives in ${host.location}`} />
           <DetailItem icon="message" label={`Speaks ${host.languages}`} />
@@ -52,18 +52,18 @@ export function HostProfileCard({ host }: { host: SampleHost }) {
 
       <DetailSection title="Background and credentials">
         <DetailItem icon="bag" label={host.occupation} />
-        <Text className="font-lora-regular text-onboarding-muted">{host.background}</Text>
+        <Text className="text-onboarding-muted">{host.background}</Text>
         <View className="gap-md">
           {host.credentials.map((credential) => (
             <View key={credential.title} className="rounded-lg border border-outline/50 p-lg gap-sm">
               <Text
                 variant="button"
                 accessibilityRole="header"
-                className="font-lora-semibold text-onboarding-ink"
+                className="text-onboarding-ink"
               >
                 {credential.title}
               </Text>
-              <Text variant="bodySmall" className="font-lora-regular text-onboarding-muted">
+              <Text variant="bodySmall" className="text-onboarding-muted">
                 {credential.description}
               </Text>
             </View>
@@ -72,9 +72,9 @@ export function HostProfileCard({ host }: { host: SampleHost }) {
       </DetailSection>
 
       <DetailSection title="During your stay">
-        <Text className="font-lora-regular text-onboarding-muted">{host.hostingApproach}</Text>
+        <Text className="text-onboarding-muted">{host.hostingApproach}</Text>
         <DetailItem icon="clock" label={host.response} />
-        <Text variant="caption" className="font-lora-regular text-onboarding-muted">
+        <Text variant="caption" className="text-onboarding-muted">
           Messaging is not connected.
         </Text>
       </DetailSection>

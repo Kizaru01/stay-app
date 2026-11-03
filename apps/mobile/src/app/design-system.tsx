@@ -144,17 +144,31 @@ export default function DesignSystem() {
           <Text accessibilityRole="header" variant="button">
             03. Typography
           </Text>
+          <Text variant="metadata" tone="muted">Fraunces · editorial / Manrope · reading and interface</Text>
           <Text variant="display">Stay for every kind of trip</Text>
-          <Text variant="heading1">Explore with ease</Text>
-          <Text variant="heading2">Seaside Villa with Private Pool</Text>
+          <Text variant="heading1">Seaside Villa with Private Pool</Text>
+          <Text variant="heading2">What guests say</Text>
+          <Text variant="cardTitle">A coastal escape near the ocean</Text>
+          <Text variant="cardTitleSmall">Mountain cabin with a private terrace</Text>
+          <Text variant="location" tone="muted">San Juan, La Union, Philippines</Text>
+          <Text variant="personName">Hosted by María</Text>
+          <Text variant="personNameSmall">José · Guest review</Text>
+          <Text variant="metadata" tone="muted">Superhost · 4 years hosting · October 2026</Text>
           <Text>
-            From beach getaways to mountain cabins, find a stay that fits your
-            vibe.
+            Beautiful place! The villa is even better in person. We loved the
+            private pool and the ocean view. María’s recommendations made our
+            family weekend extra special.
           </Text>
-          <Text variant="caption" tone="muted">
-            La Union, Philippines
-          </Text>
-          <Text variant="button">Book this stay</Text>
+          <Text variant="bodySmall">A quiet place for café mornings and beach walks.</Text>
+          <Text variant="amenity">Private pool · Beach access · Free Wi-Fi</Text>
+          <Text variant="ratingDisplay">4.8</Text>
+          <Text variant="rating">4.8 · 192 reviews</Text>
+          <Text variant="price">₱12,500<Text variant="bodySmall" tone="muted"> / night</Text></Text>
+          <Text variant="priceSmall">₱8,250<Text variant="caption" tone="muted"> / night</Text></Text>
+          <Text variant="label">Check-in &amp; check-out</Text>
+          <Text variant="caption" tone="muted">Sample stay · Photos and prices are illustrative.</Text>
+          <Text variant="button">Read 192 reviews</Text>
+          <Text variant="buttonSmall">Show all 12 amenities</Text>
         </Surface>
         <Surface>
           <Text accessibilityRole="header" variant="button">
@@ -257,6 +271,14 @@ export default function DesignSystem() {
             label="Disabled field"
             placeholder="Unavailable"
             editable={false}
+          />
+          <TextField
+            label="Confirmation code · typography preview"
+            defaultValue="012345"
+            keyboardType="number-pad"
+            maxLength={6}
+            className="type-otp"
+            style={{ textAlign: "center" }}
           />
         </Surface>
         <Surface>

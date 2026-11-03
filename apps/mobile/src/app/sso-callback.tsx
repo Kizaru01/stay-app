@@ -8,7 +8,7 @@ export default function SSOCallback() {
     <View className="flex-1 items-center justify-center gap-lg bg-onboarding-paper px-xl">
       <Stack.Screen options={{ headerShown: false }} />
       <Text>Returning to StayApp…</Text>
-      <Link href="/sign-in">Return to sign in</Link>
+      <Link href="/sign-in" className="type-button-sm">Return to sign in</Link>
     </View>
   );
 }

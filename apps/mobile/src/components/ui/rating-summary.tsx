@@ -27,7 +27,7 @@ export function RatingSummary({
         accessibilityLabel={`${rating} out of 5 from ${reviewCount} reviews`}
       >
         <View className="flex-row items-center gap-sm">
-          <Text variant="display">{rating.toFixed(1)}</Text>
+          <Text variant="ratingDisplay">{rating.toFixed(1)}</Text>
           <Icon name="star" filled className="text-primary" />
         </View>
         <Text variant="caption" tone="muted">
@@ -42,7 +42,7 @@ export function RatingSummary({
             accessibilityLabel={`${category.label}: ${category.score} out of 5`}
           >
             <Icon name={category.icon} size="sm" />
-            <Text variant="caption" className="font-inter-semibold">
+            <Text variant="ratingSmall">
               {category.score.toFixed(1)}
             </Text>
             <Text variant="caption" tone="muted" className="text-center">

@@ -150,17 +150,17 @@ function PropertyDetailsContent({
         <View className="px-xl">
           <View className="pt-lg pb-lg gap-xs">
             <Text
-              variant="heading2"
+              variant="heading1"
               accessibilityRole="header"
-              className="font-lora-semibold text-onboarding-ink"
+              className="text-onboarding-ink"
             >
               {property.title}
             </Text>
             <View className="flex-row items-center gap-sm">
               <Icon name="pin" size="sm" className="text-onboarding-muted" />
               <Text
-                variant="bodySmall"
-                className="font-lora-regular flex-1 text-onboarding-ink"
+                variant="location"
+                className="flex-1 text-onboarding-ink"
               >
                 {property.location}
               </Text>
@@ -180,8 +180,8 @@ function PropertyDetailsContent({
                     className="text-onboarding-muted"
                   />
                   <Text
-                    variant="bodySmall"
-                    className="font-lora-semibold text-onboarding-ink"
+                    variant="rating"
+                    className="text-onboarding-ink"
                   >
                     {property.rating.toFixed(1)} · {property.reviewCount}{" "}
                     reviews
@@ -191,8 +191,8 @@ function PropertyDetailsContent({
               <View className="rounded-full bg-success-soft px-md py-xs flex-row items-center gap-sm">
                 <Icon name="crown" size="sm" className="text-onboarding" />
                 <Text
-                  variant="caption"
-                  className="font-lora-medium text-onboarding"
+                  variant="metadata"
+                  className="text-onboarding"
                 >
                   Guest favorite
                 </Text>
@@ -200,7 +200,7 @@ function PropertyDetailsContent({
             </View>
             <Text
               variant="bodySmall"
-              className="font-lora-regular text-onboarding-muted"
+              className="text-onboarding-muted"
             >
               {property.guests} guests · {property.bedrooms} bedrooms ·{" "}
               {property.beds} beds · {property.bathrooms} bathrooms
@@ -216,14 +216,14 @@ function PropertyDetailsContent({
           <DetailSection title="About this place">
             <Text
               variant="bodySmall"
-              className="font-lora-regular text-onboarding-muted"
+              className="text-onboarding-muted"
             >
               {property.introduction}
             </Text>
             {descriptionExpanded ? (
               <Text
                 variant="bodySmall"
-                className="font-lora-regular text-onboarding-muted"
+                className="text-onboarding-muted"
               >
                 {property.fullDescription}
               </Text>
@@ -264,13 +264,13 @@ function PropertyDetailsContent({
             <LocationPreview coastal={property.category === "beach"} />
             <Text
               variant="bodySmall"
-              className="font-lora-regular text-onboarding-muted"
+              className="text-onboarding-muted"
             >
               {property.locationNote}
             </Text>
             <Text
               variant="caption"
-              className="font-lora-regular text-onboarding-muted"
+              className="text-onboarding-muted"
             >
               Illustrative map · Approximate area only
             </Text>
@@ -284,8 +284,8 @@ function PropertyDetailsContent({
               >
                 <View className="flex-row gap-sm items-center">
                   <Text
-                    variant="heading1"
-                    className="font-lora-bold text-onboarding-ink"
+                    variant="ratingHeading"
+                    className="text-onboarding-ink"
                   >
                     {property.rating.toFixed(1)}
                   </Text>
@@ -293,7 +293,7 @@ function PropertyDetailsContent({
                 </View>
                 <Text
                   variant="caption"
-                  className="font-lora-regular text-onboarding-muted"
+                  className="text-onboarding-muted"
                 >
                   out of 5 · {property.reviewCount} reviews
                 </Text>
@@ -311,13 +311,13 @@ function PropertyDetailsContent({
                   />
                   <Text
                     variant="caption"
-                    className="font-lora-regular text-onboarding-muted"
+                    className="text-onboarding-muted"
                   >
                     {category.label}
                   </Text>
                   <Text
-                    variant="buttonSmall"
-                    className="font-lora-medium text-onboarding-ink"
+                    variant="rating"
+                    className="text-onboarding-ink"
                   >
                     {category.value.toFixed(1)}
                   </Text>
@@ -334,8 +334,8 @@ function PropertyDetailsContent({
           <DetailSection title="Things to know">
             <View className="gap-sm">
               <Text
-                variant="buttonSmall"
-                className="font-lora-medium text-onboarding-ink"
+                variant="label"
+                className="text-onboarding-ink"
               >
                 Check-in &amp; check-out
               </Text>
@@ -345,28 +345,28 @@ function PropertyDetailsContent({
             </View>
             <View className="gap-xs">
               <Text
-                variant="buttonSmall"
-                className="font-lora-medium text-onboarding-ink"
+                variant="label"
+                className="text-onboarding-ink"
               >
                 House rules
               </Text>
               <Text
                 variant="bodySmall"
-                className="font-lora-regular text-onboarding-muted"
+                className="text-onboarding-muted"
               >
                 {houseRules.join(" · ")}
               </Text>
             </View>
             <View className="gap-xs">
               <Text
-                variant="buttonSmall"
-                className="font-lora-medium text-onboarding-ink"
+                variant="label"
+                className="text-onboarding-ink"
               >
                 Cancellation
               </Text>
               <Text
                 variant="bodySmall"
-                className="font-lora-regular text-onboarding-muted"
+                className="text-onboarding-muted"
               >
                 Sample policy: {property.cancellationPolicy}
               </Text>
@@ -374,7 +374,7 @@ function PropertyDetailsContent({
           </DetailSection>
           <Text
             variant="caption"
-            className="font-lora-regular text-onboarding-muted pb-lg"
+            className="text-onboarding-muted pb-lg"
           >
             Sample stay · Photos, host, prices, amenities and reviews are
             illustrative.
@@ -392,13 +392,13 @@ function PropertyDetailsContent({
         >
           <View className={`gap-xs ${narrow ? "" : "flex-1"}`}>
             <Text
-              variant="heading2"
-              className="font-lora-semibold text-onboarding-ink"
+              variant="price"
+              className="text-onboarding-ink"
             >
               {property.nightlyPrice}
               <Text
                 variant="bodySmall"
-                className="font-lora-regular text-onboarding-muted"
+                className="text-onboarding-muted"
               >
                 {" "}
                 / night
@@ -406,7 +406,7 @@ function PropertyDetailsContent({
             </Text>
             <Text
               variant="caption"
-              className="font-lora-regular text-onboarding-muted"
+              className="text-onboarding-muted"
             >
               Before taxes · Sample price
             </Text>
@@ -421,7 +421,6 @@ function PropertyDetailsContent({
               <Text
                 variant="button"
                 tone="inverse"
-                className="font-lora-semibold"
               >
                 Reserve
               </Text>
@@ -448,15 +447,14 @@ function PropertyDetailsContent({
           {overlay === "reviews" ? (
             <>
               <Text
-                variant="heading1"
-                className="font-lora-bold text-onboarding-ink"
+                variant="ratingHeading"
+                className="text-onboarding-ink"
               >
                 ★ {property.rating.toFixed(1)} · {property.reviewCount} reviews
               </Text>
               <Text
                 variant="bodySmall"
                 tone="muted"
-                className="font-lora-regular"
               >
                 A selection of illustrative guest reviews. Counts and ratings
                 are sample content.
@@ -475,14 +473,13 @@ function PropertyDetailsContent({
               />
               <Text
                 variant="heading2"
-                className="font-lora-semibold text-onboarding-ink"
+                className="text-onboarding-ink"
               >
                 {property.title}
               </Text>
               <Text
                 variant="bodySmall"
                 tone="muted"
-                className="font-lora-regular"
               >
                 {property.location}
               </Text>
@@ -492,13 +489,12 @@ function PropertyDetailsContent({
               />
               <DetailSection title="Booking preview">
                 <Text
-                  variant="heading2"
+                  variant="price"
                   tone="primary"
-                  className="font-lora-semibold"
                 >
                   {property.nightlyPrice} / night
                 </Text>
-                <Text className="font-lora-regular text-onboarding-muted">
+                <Text className="text-onboarding-muted">
                   This is a sample stay. Dates, live availability, taxes and
                   booking are not connected yet. No reservation has been made.
                 </Text>

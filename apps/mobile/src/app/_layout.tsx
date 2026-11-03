@@ -5,14 +5,12 @@ import "../../global.css";
 import { Stack } from "expo-router";
 import { useEffect } from "react";
 import { useFonts } from "expo-font";
-import { Inter_400Regular } from "@expo-google-fonts/inter/400Regular";
-import { Inter_500Medium } from "@expo-google-fonts/inter/500Medium";
-import { Inter_600SemiBold } from "@expo-google-fonts/inter/600SemiBold";
-import { Inter_700Bold } from "@expo-google-fonts/inter/700Bold";
-import { Lora_400Regular } from "@expo-google-fonts/lora/400Regular";
-import { Lora_500Medium } from "@expo-google-fonts/lora/500Medium";
-import { Lora_600SemiBold } from "@expo-google-fonts/lora/600SemiBold";
-import { Lora_700Bold } from "@expo-google-fonts/lora/700Bold";
+import { Fraunces_500Medium } from "@expo-google-fonts/fraunces/500Medium";
+import { Fraunces_600SemiBold } from "@expo-google-fonts/fraunces/600SemiBold";
+import { Manrope_400Regular } from "@expo-google-fonts/manrope/400Regular";
+import { Manrope_500Medium } from "@expo-google-fonts/manrope/500Medium";
+import { Manrope_600SemiBold } from "@expo-google-fonts/manrope/600SemiBold";
+import { Manrope_700Bold } from "@expo-google-fonts/manrope/700Bold";
 import * as SplashScreen from "expo-splash-screen";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "";
@@ -27,14 +25,12 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const [loaded, error] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
-    Inter_700Bold,
-    Lora_400Regular,
-    Lora_500Medium,
-    Lora_600SemiBold,
-    Lora_700Bold,
+    Fraunces_500Medium,
+    Fraunces_600SemiBold,
+    Manrope_400Regular,
+    Manrope_500Medium,
+    Manrope_600SemiBold,
+    Manrope_700Bold,
   });
 
   useEffect(() => {
@@ -48,7 +44,7 @@ export default function RootLayout() {
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
       <Stack
         screenOptions={{
-          headerTitleStyle: { fontFamily: "Inter_600SemiBold" },
+          headerTitleStyle: { fontFamily: "Manrope_600SemiBold" },
           headerShadowVisible: false,
         }}
       >

@@ -17,8 +17,8 @@ export default function BrowseTabs() {
         backgroundColor="#f7fafb"
         iconColor={{ default: "#60758d", selected: "#003d38" }}
         labelStyle={{
-          default: { fontFamily: "Inter_400Regular", fontSize: 11, color: "#60758d" },
-          selected: { fontFamily: "Inter_600SemiBold", fontSize: 11, color: "#003d38" },
+          default: { fontFamily: "Manrope_400Regular", fontSize: 11, color: "#60758d" },
+          selected: { fontFamily: "Manrope_600SemiBold", fontSize: 11, color: "#003d38" },
         }}
         blurEffect="none"
         shadowColor="transparent"

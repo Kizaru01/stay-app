@@ -128,7 +128,8 @@ export default function ConfirmEmailScreen() {
                 onSubmitEditing={confirm}
                 error={error}
                 editable={!submitted}
-                style={{ textAlign: "center", letterSpacing: 8, fontSize: 24 }}
+                className="type-otp"
+                style={{ textAlign: "center" }}
               />
               <Button title="Confirm email" loading={submitted} onPress={confirm} className="bg-onboarding" />
               <Button title="Send a new code" disabled={submitted} variant="ghost" onPress={resend} />

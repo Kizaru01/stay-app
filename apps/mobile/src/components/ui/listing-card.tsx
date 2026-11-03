@@ -56,16 +56,16 @@ export function ListingCard({
       ) : null}
       <View className={`gap-xs ${horizontal ? "flex-1 min-w-36" : "w-full"}`}>
         <Text
-          variant={home ? "bodySmall" : "button"}
-          className="font-lora-semibold text-onboarding-ink"
+          variant={home ? "cardTitleSmall" : "cardTitle"}
+          className="text-onboarding-ink"
         >
           {listing.title}
         </Text>
         <View className="flex-row items-start gap-xs">
           <Icon name="pin" size="sm" className="text-onboarding-muted" />
           <Text
-            variant={home ? "caption" : "bodySmall"}
-            className="font-lora-regular flex-1 text-onboarding-muted"
+            variant={home ? "locationSmall" : "location"}
+            className="flex-1 text-onboarding-muted"
           >
             {listing.location}
           </Text>
@@ -77,8 +77,8 @@ export function ListingCard({
           >
             <Icon name="star" size="sm" filled className="text-onboarding" />
             <Text
-              variant={home ? "caption" : "bodySmall"}
-              className="font-lora-regular text-onboarding-ink"
+              variant={home ? "ratingSmall" : "rating"}
+              className="text-onboarding-ink"
             >
               {listing.rating.toFixed(1)} ({listing.reviewCount})
             </Text>
@@ -86,7 +86,7 @@ export function ListingCard({
           {listing.guests !== undefined ? (
             <Text
               variant={home ? "caption" : "bodySmall"}
-              className="font-lora-regular text-onboarding-muted"
+              className="text-onboarding-muted"
             >
               · {listing.guests} guests
             </Text>
@@ -94,7 +94,7 @@ export function ListingCard({
           {listing.bedrooms !== undefined ? (
             <Text
               variant={home ? "caption" : "bodySmall"}
-              className="font-lora-regular text-onboarding-muted"
+              className="text-onboarding-muted"
             >
               · {listing.bedrooms}{" "}
               {listing.bedrooms === 1 ? "bedroom" : "bedrooms"}
@@ -102,13 +102,13 @@ export function ListingCard({
           ) : null}
         </View>
         <Text
-          variant={home ? "button" : "heading2"}
-          className="font-lora-semibold text-onboarding-ink pt-xs"
+          variant={home ? "priceSmall" : "price"}
+          className="text-onboarding-ink pt-xs"
         >
           {listing.nightlyPrice}
           <Text
             variant="bodySmall"
-            className="font-lora-regular text-onboarding-muted"
+            className="text-onboarding-muted"
           >
             {" "}
             / night

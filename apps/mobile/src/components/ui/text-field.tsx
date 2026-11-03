@@ -34,7 +34,7 @@ export function TextField({ label, labelHidden = false, hint, error, icon, onCle
   } : {};
   return (
     <View className="gap-sm">
-      {!labelHidden ? <Text variant="buttonSmall">{label}</Text> : null}
+      {!labelHidden ? <Text variant="label">{label}</Text> : null}
       <View className={`min-h-control-md flex-row items-center gap-sm rounded-md curve-continuous border px-md ${unavailable ? "bg-disabled" : "bg-surface"} ${error ? "border-danger" : focused && !unavailable ? "border-focus" : "border-outline"}`}>
       {icon ? <Icon name={icon} className={unavailable ? "text-muted" : "text-ink"} /> : null}
       <TextInput

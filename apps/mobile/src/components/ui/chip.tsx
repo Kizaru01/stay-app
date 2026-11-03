@@ -20,7 +20,7 @@ export function Chip({ label, icon, selected = false, disabled = false, classNam
       style={style}
     >
       {icon ? <Icon name={icon} size="sm" className={disabled ? "text-muted" : selected ? "text-on-primary" : "text-ink"} /> : null}
-      <Text className="shrink text-center" variant="bodySmall" tone={disabled ? "disabled" : selected ? "inverse" : "default"}>{label}</Text>
+      <Text className="shrink text-center" variant="label" tone={disabled ? "disabled" : selected ? "inverse" : "default"}>{label}</Text>
     </Pressable>
   );
 }

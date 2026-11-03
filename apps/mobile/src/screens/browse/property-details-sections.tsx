@@ -24,7 +24,7 @@ export function DetailSection({
         <Text
           variant="heading2"
           accessibilityRole="header"
-          className="font-lora-semibold text-onboarding-ink"
+          className="text-onboarding-ink"
         >
           {title}
         </Text>
@@ -52,7 +52,7 @@ export function DetailAction({
       accessibilityState={expanded === undefined ? undefined : { expanded }}
       className={`min-h-control-md flex-row items-center gap-sm rounded-lg active:opacity-70 focus-visible:outline-2 focus-visible:outline-focus ${outline ? "border border-onboarding justify-center px-lg" : "self-start"}`}
     >
-      <Text variant="buttonSmall" className="font-lora-medium text-onboarding">
+      <Text variant="buttonSmall" className="text-onboarding">
         {label}
       </Text>
       <View style={{ transform: [{ rotate: expanded ? "270deg" : "90deg" }] }}>
@@ -67,8 +67,8 @@ export function DetailItem({ icon, label }: { icon: IconName; label: string }) {
     <View className="flex-row items-center gap-md py-sm">
       <Icon name={icon} className="text-onboarding-ink" />
       <Text
-        variant="caption"
-        className="font-lora-regular flex-1 text-onboarding-muted"
+        variant="amenitySmall"
+        className="flex-1 text-onboarding-muted"
       >
         {label}
       </Text>
@@ -121,20 +121,20 @@ export function ReviewCard({ review }: { review: SampleReview }) {
     <View className="gap-md py-lg border-t border-outline/50">
       <View className="flex-row items-center gap-md">
         <View className="h-control-md w-control-md rounded-full bg-success-soft items-center justify-center">
-          <Text variant="button" tone="primary" className="font-lora-medium">
+          <Text variant="personName" tone="primary">
             {review.name.slice(0, 1)}
           </Text>
         </View>
         <View className="flex-1">
           <Text
-            variant="button"
-            className="font-lora-medium text-onboarding-ink"
+            variant="personName"
+            className="text-onboarding-ink"
           >
             {review.name}
           </Text>
           <Text
-            variant="caption"
-            className="font-lora-regular text-onboarding-muted"
+            variant="metadata"
+            className="text-onboarding-muted"
           >
             {review.date}
           </Text>
@@ -156,7 +156,7 @@ export function ReviewCard({ review }: { review: SampleReview }) {
       </View>
       <Text
         variant="bodySmall"
-        className="font-lora-regular text-onboarding-muted"
+        className="text-onboarding-muted"
       >
         {review.text}
       </Text>
@@ -186,7 +186,7 @@ export function DetailOverlay({
           <Text
             variant="heading2"
             accessibilityRole="header"
-            className="font-lora-semibold flex-1 text-onboarding-ink"
+            className="flex-1 text-onboarding-ink"
           >
             {title}
           </Text>

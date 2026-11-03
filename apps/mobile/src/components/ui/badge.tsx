@@ -15,7 +15,7 @@ export type BadgeProps = ViewProps & { label: string; variant?: keyof typeof var
 export function Badge({ label, variant = "success", className = "", style, ...props }: BadgeProps) {
   return (
     <View {...props} className={`self-start rounded-sm curve-continuous px-md py-xs ${variants[variant].surface} ${className}`} style={style}>
-      <Text variant="caption" tone={variants[variant].tone} className="font-inter-medium">{label}</Text>
+      <Text variant="metadata" tone={variants[variant].tone}>{label}</Text>
     </View>
   );
 }

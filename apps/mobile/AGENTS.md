@@ -112,6 +112,15 @@ Follow the established StayApp visual language and provided design references.
 
 Do not introduce unrelated visual changes while implementing a feature.
 
+### Typography
+
+Use the shared semantic `Text` variants and `type-*` utilities defined in `global.css`.
+Reserve Fraunces for editorial headings and property/card titles; use Manrope for
+body copy, names, controls, prices, ratings, and metadata. Load explicit static
+font faces centrally in the root layout. Avoid local font-family or weight
+overrides; add or reuse a semantic role when a distinct treatment is needed.
+Preserve font scaling and verify text fit on narrow screens when changing type.
+
 ## Server State
 
 Use TanStack Query for server state.
@@ -271,4 +280,4 @@ Do not automatically:
 - connect TanStack Query
 - modify the API
 
-unless the task explicitly requires those changes. 
+unless the task explicitly requires those changes.
