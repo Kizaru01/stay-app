@@ -40,7 +40,9 @@ function screen(id = "sample-la-union-villa", canGoBack = true) {
     return exports;
   }
   modules["./properties"] = load("fixtures/properties.ts");
+  modules["./hosts"] = load("fixtures/hosts.ts");
   modules["@/fixtures/property-details"] = load("fixtures/property-details.ts");
+  modules["./host-profile-card"] = load("screens/browse/host-profile-card.tsx");
   const component = load("screens/browse/property-details-screen.tsx");
   function render() {
     cursor = 0;
@@ -50,6 +52,9 @@ function screen(id = "sample-la-union-villa", canGoBack = true) {
       if (Array.isArray(node)) return node.forEach(visit);
       if (!node || typeof node !== "object") return;
       nodes.push(node);
+      if (node.type === modules["./host-profile-card"].HostProfileCard) {
+        visit(node.type(node.props));
+      }
       visit(node.props?.children);
     }
     visit(root.type(root.props));
@@ -128,5 +133,53 @@ test("every catalogue property has consistent detail data and bounded review rat
     assert.ok(property.host.name && property.introduction && property.fullDescription);
     assert.ok(property.amenities.length >= 8);
     assert.ok(property.reviews.every(review => review.rating >= 1 && review.rating <= 5));
+  }
+});
+
+test("every listing resolves a complete sample host with consistent stable identity", () => {
+  const { properties } = screen();
+  const hosts = new Map();
+  for (const { host } of properties) {
+    assert.match(host.id, /^sample-host-/);
+    for (const field of ["name", "bio", "location", "languages", "response", "hostingApproach", "occupation", "background"]) {
+      assert.ok(host[field].trim(), `${host.id}: ${field}`);
+    }
+    assert.ok(Number.isInteger(host.yearsHosting) && host.yearsHosting > 0);
+    assert.equal(typeof host.superhost, "boolean");
+    assert.ok(host.avatar);
+    assert.ok(host.interests.length > 0);
+    assert.ok(host.credentials.length > 0);
+    assert.ok(host.credentials.every(item => item.title.trim() && item.description.trim()));
+    if (hosts.has(host.id)) assert.equal(hosts.get(host.id), host);
+    hosts.set(host.id, host);
+  }
+  assert.equal(hosts.size, 8);
+});
+
+test("host overlay presents the selected profile and conditional hosting labels", () => {
+  for (const [id, name, status] of [
+    ["sample-la-union-villa", "Maria", "4 years hosting"],
+    ["sample-rizal-treehouse", "Paolo", "1 year hosting"],
+  ]) {
+    const app = screen(id);
+    const row = app.render().find(node => node.type === "HostRow");
+    assert.equal(row.props.name, name);
+    row.props.onPress();
+    const nodes = app.render();
+    const text = node => Array.isArray(node) ? node.map(text).join("") : typeof node === "object" ? "" : String(node ?? "");
+    const texts = nodes.filter(node => node.type === "Text").map(node => text(node.props.children));
+    assert.ok(texts.includes(status));
+    assert.equal(nodes.some(node => node.type === "Badge" && node.props.label === "Superhost"), row.props.superhost);
+    assert.ok(texts.includes(row.props.bio));
+    assert.ok(texts.includes(row.props.hostingApproach));
+    assert.ok(texts.includes(row.props.background));
+    assert.ok(texts.includes("Background, credentials and badges are illustrative and have not been verified."));
+    for (const credential of row.props.credentials) {
+      assert.ok(texts.includes(credential.title));
+      assert.ok(texts.includes(credential.description));
+    }
+    assert.ok(nodes.some(node => node.props?.label === `Lives in ${row.props.location}`));
+    nodes.find(node => node.type === "DetailOverlay").props.onClose();
+    assert.ok(!app.render().some(node => node.type === "DetailOverlay"));
   }
 });

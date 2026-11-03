@@ -1,5 +1,6 @@
 import type { IconName } from "@/components/ui/icon";
 import { sampleProperties } from "./properties";
+import { samplePropertyHosts } from "./hosts";
 
 export type Amenity = { icon: IconName; label: string };
 export type SampleReview = { name: string; date: string; rating: number; text: string };
@@ -13,14 +14,13 @@ const essentials: Amenity[] = [
 export const samplePropertyDetails = sampleProperties.map(property => {
   const seaside = property.id === "sample-la-union-villa";
   const beach = property.category === "beach";
+  const host = samplePropertyHosts[property.id];
+  if (!host) throw new Error(`Missing sample host for ${property.id}`);
   return {
     ...property,
     beds: seaside ? 5 : property.bedrooms,
     bathrooms: seaside ? 3 : Math.max(1, Math.ceil(property.bedrooms / 2)),
-    host: { name: seaside ? "Maria" : "Alex", yearsHosting: seaside ? 4 : 3, superhost: true,
-      avatar: require("../../assets/images/demo/host.jpg"),
-      bio: "I love sharing thoughtful spaces and local recommendations. Before arrival, I’ll send a welcome guide with favourite places to eat and practical tips for a relaxed stay.",
-      languages: "English and Filipino", response: "Usually responds within an hour" },
+    host,
     introduction: seaside ? "Relax in a private coastal villa with an infinity pool, spacious open living areas, and beautiful ocean views. Ideal for families and friends." : property.description,
     fullDescription: seaside ? "Wake up to the sound of the sea, share breakfast on the terrace, and spend slow afternoons beside your private pool. Three comfortable bedrooms and generous shared spaces make it easy to settle in together.\n\nPrepare fresh market finds in the equipped kitchen, dine outdoors at sunset, or explore San Juan’s cafés and surf spots. The entire villa is yours during your stay. Children should be supervised around the unfenced pool." : "Enjoy the entire space at your own pace, with comfortable sleeping areas, a kitchen for shared meals and a welcoming spot to unwind. Fresh linens and essentials are provided. Your host can share local dining and sightseeing suggestions before arrival.",
     amenities: [...(beach ? [{ icon: "pool" as const, label: "Private pool" }, { icon: "beach" as const, label: "Beach access" }, { icon: "snow" as const, label: "Air conditioning" }, { icon: "waves" as const, label: "Ocean view" }] : [{ icon: "home" as const, label: "Entire place" }, { icon: "sparkle" as const, label: "Private outdoor space" }]), ...essentials, { icon: "coffee" as const, label: "Coffee maker" }, { icon: "lock" as const, label: "Private entrance" }],

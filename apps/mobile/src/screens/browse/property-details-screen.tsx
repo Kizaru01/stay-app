@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { HostProfileCard } from "./host-profile-card";
 import {
   PropertyQuestionOptions,
   HostQuestionPreview,
@@ -443,41 +444,7 @@ function PropertyDetailsContent({
               onContactHost={() => setOverlay("contact")}
             />
           ) : null}
-          {overlay === "host" ? (
-            <>
-              <Photo
-                source={property.host.avatar}
-                compact
-                label={`Illustrative portrait of host ${property.host.name}`}
-                className="h-24 w-24 rounded-full"
-              />
-              <Text
-                variant="heading1"
-                className="font-lora-bold text-onboarding-ink"
-              >
-                Hosted by {property.host.name}
-              </Text>
-              <Text
-                variant="bodySmall"
-                tone="primary"
-                className="font-lora-medium"
-              >
-                Superhost · {property.host.yearsHosting} years hosting
-              </Text>
-              <Text className="font-lora-regular text-onboarding-muted">
-                {property.host.bio}
-              </Text>
-              <DetailItem icon="message" label={property.host.languages} />
-              <DetailItem icon="clock" label={property.host.response} />
-              <Text
-                variant="caption"
-                tone="muted"
-                className="font-lora-regular"
-              >
-                Sample host profile · Messaging is not connected.
-              </Text>
-            </>
-          ) : null}
+          {overlay === "host" ? <HostProfileCard host={property.host} /> : null}
           {overlay === "reviews" ? (
             <>
               <Text

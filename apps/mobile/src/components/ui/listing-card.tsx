@@ -56,8 +56,8 @@ export function ListingCard({
       ) : null}
       <View className={`gap-xs ${horizontal ? "flex-1 min-w-36" : "w-full"}`}>
         <Text
-          variant={home ? "caption" : "button"}
-          className="font-lora-medium text-onboarding-ink"
+          variant={home ? "bodySmall" : "button"}
+          className="font-lora-semibold text-onboarding-ink"
         >
           {listing.title}
         </Text>
@@ -102,8 +102,8 @@ export function ListingCard({
           ) : null}
         </View>
         <Text
-          variant={home ? "bodySmall" : "heading2"}
-          className="font-lora-medium text-onboarding-ink pt-xs"
+          variant={home ? "button" : "heading2"}
+          className="font-lora-semibold text-onboarding-ink pt-xs"
         >
           {listing.nightlyPrice}
           <Text
