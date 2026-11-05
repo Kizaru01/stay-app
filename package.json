@@ -5,6 +5,7 @@
   "main": "index.js",
   "private": true,
   "scripts": {
+    "build": "pnpm --filter mobile exec expo export --platform android --platform ios",
     "mobile": "pnpm --filter mobile start",
     "mobile:android": "pnpm --filter mobile android",
     "mobile:ios": "pnpm --filter mobile ios"
@@ -12,5 +13,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.22.0"
+  "packageManager": "pnpm@10.22.0",
+  "dependencies": {
+    "@neon/config": "^1.11.1",
+    "@neon/env": "^1.6.13"
+  }
 }
