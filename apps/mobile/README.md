@@ -89,3 +89,19 @@ Join our community of developers creating universal apps.
 
 - [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
 - [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+## Testing Google sign-in
+
+Install a StayApp development build on a device or emulator. The Expo config
+registers the `mobile` scheme and Clerk generates `mobile://sso-callback` for
+that build. Expo Go uses an environment-dependent `exp://` URL, so use email
+sign-in when working in Expo Go.
+
+In the Clerk instance selected by the mobile publishable key, verify that
+Google and the Native API are enabled and that `mobile://sso-callback` is in
+the mobile SSO redirect allowlist under Native applications. Keep the
+Google-to-Clerk callback configured separately using the URL shown by Clerk.
+
+Open the deep link on the device first to verify Expo Router receives it.
+Then complete Google consent from the sign-in screen. Confirm that StayApp
+opens Home after an authenticated `POST /api/auth/sync` succeeds. Repeat
+with email sign-in and with the API unavailable to check sync retry and sign-out.

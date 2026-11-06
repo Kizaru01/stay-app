@@ -11,11 +11,11 @@ import {
 } from "react-native";
 import {
   Link,
-  Redirect,
   Stack,
   useLocalSearchParams,
   useRouter,
 } from "expo-router";
+import { isRunningInExpoGo } from "expo";
 import { useAuth, useSignIn, useSignUp, useSSO } from "@clerk/expo";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -24,6 +24,7 @@ import { Icon, StatusAlert, Text, TextField } from "@/components/ui";
 import { WelcomeLogo } from "@/components/ui/welcome-logo";
 import { rememberAuthEntry } from "@/screens/onboarding/onboarding-storage";
 import { authErrorMessage, requireAuthSuccess } from "./clerk-errors";
+import { SignedInHandoff } from "./signed-in-handoff";
 
 type Mode = "sign-up" | "sign-in";
 
@@ -111,6 +112,10 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
     Keyboard.dismiss();
     setValidationError(false);
     setMessage(undefined);
+    if (provider === "Google" && isRunningInExpoGo()) {
+      setMessage("Google sign-in requires a StayApp development build. You can continue with email in Expo Go.");
+      return;
+    }
     submitting.current = true;
     setBusy(true);
     const strategies = {
@@ -122,7 +127,6 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
       const result = await startSSOFlow({ strategy: strategies[provider] });
       if (result.createdSessionId && result.setActive) {
         await result.setActive({ session: result.createdSessionId });
-        router.replace("/home");
       } else if (result.signUp?.status === "missing_requirements") {
         setMessage(
           "Your provider account needs additional details. Please use email sign-up or contact support.",
@@ -134,6 +138,11 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
         setMessage(
           "Your provider account requires additional verification. Please use email sign-in.",
         );
+      } else if (
+        result.authSessionResult?.type !== "cancel" &&
+        result.authSessionResult?.type !== "dismiss"
+      ) {
+        setMessage("We couldn't finish signing you in. Try again or continue with email.");
       }
     } catch (error) {
       setValidationError(true);
@@ -187,7 +196,6 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
         if (signIn.status === "complete") {
           requireAuthSuccess(await signIn.finalize());
           setPassword("");
-          router.replace("/home");
         } else if (
           signIn.status === "needs_second_factor" ||
           signIn.status === "needs_client_trust"
@@ -212,7 +220,7 @@ export function AuthEntryScreen({ mode }: { mode: Mode }) {
     }
   };
 
-  if (isSignedIn) return <Redirect href="/home" />;
+  if (isSignedIn) return <SignedInHandoff />;
 
   return (
     <KeyboardAvoidingView

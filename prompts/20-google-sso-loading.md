@@ -107,3 +107,10 @@ Step 1 reviewed the mobile authentication entry screen, callback route, root lay
 Android reproduction is pending. Neither ADB nor an Android emulator executable was available in this workspace, so the Google consent hang and its failing stage could not be observed. Application changes are pending the device trace required by step 1.
 
 The 26 existing mobile sync tests, TypeScript check, and git diff whitespace check passed.
+
+After the user authorized proceeding, the mobile flow was updated to explain the
+development build requirement in Expo Go, handle an incomplete browser return,
+and wait for the existing synchronization boundary before opening Home. The
+working tree already mounted the boundary in the root layout. Google callback
+and email authentication use the same synchronization status and recovery UI.
+The live device trace, Clerk allowlist check, and Neon write are still pending.

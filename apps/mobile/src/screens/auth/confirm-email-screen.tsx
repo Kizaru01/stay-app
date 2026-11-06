@@ -1,12 +1,13 @@
 import { useCallback, useRef, useState } from "react";
 import { Keyboard, KeyboardAvoidingView, Platform, ScrollView, View, useWindowDimensions } from "react-native";
-import { Redirect, Stack, useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
+import { Stack, useLocalSearchParams, useRouter, useFocusEffect } from "expo-router";
 import { useAuth, useSignIn, useSignUp } from "@clerk/expo";
 import { StatusBar } from "expo-status-bar";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { Button, Text, TextField } from "@/components/ui";
 import { WelcomeLogo } from "@/components/ui/welcome-logo";
 import { authErrorMessage, requireAuthSuccess } from "./clerk-errors";
+import { SignedInHandoff } from "./signed-in-handoff";
 
 export default function ConfirmEmailScreen() {
   const params = useLocalSearchParams<{ flow?: string }>();
@@ -59,7 +60,6 @@ export default function ConfirmEmailScreen() {
         return;
       }
       requireAuthSuccess(await attempt.finalize());
-      router.replace("/home");
     } catch (error) {
       setError(authErrorMessage(error));
     } finally {
@@ -84,7 +84,7 @@ export default function ConfirmEmailScreen() {
     }
   };
 
-  if (isSignedIn) return <Redirect href="/home" />;
+  if (isSignedIn) return <SignedInHandoff />;
 
   return (
     <KeyboardAvoidingView className="flex-1 bg-onboarding-paper" behavior={Platform.OS === "ios" ? "padding" : "height"}>
