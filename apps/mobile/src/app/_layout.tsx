@@ -12,6 +12,7 @@ import { Manrope_500Medium } from "@expo-google-fonts/manrope/500Medium";
 import { Manrope_600SemiBold } from "@expo-google-fonts/manrope/600SemiBold";
 import { Manrope_700Bold } from "@expo-google-fonts/manrope/700Bold";
 import * as SplashScreen from "expo-splash-screen";
+import { AccountSyncBoundary } from "@/screens/auth/account-sync-boundary";
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY ?? "";
 
@@ -42,14 +43,16 @@ export default function RootLayout() {
 
   return (
     <ClerkProvider publishableKey={publishableKey} tokenCache={tokenCache}>
-      <Stack
-        screenOptions={{
-          headerTitleStyle: { fontFamily: "Manrope_600SemiBold" },
-          headerShadowVisible: false,
-        }}
-      >
-        <Stack.Screen name="(browse)" options={{ headerShown: false }} />
-      </Stack>
+      <AccountSyncBoundary>
+        <Stack
+          screenOptions={{
+            headerTitleStyle: { fontFamily: "Manrope_600SemiBold" },
+            headerShadowVisible: false,
+          }}
+        >
+          <Stack.Screen name="(browse)" options={{ headerShown: false }} />
+        </Stack>
+      </AccountSyncBoundary>
     </ClerkProvider>
   );
 }

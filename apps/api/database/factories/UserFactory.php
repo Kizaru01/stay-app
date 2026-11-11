@@ -42,4 +42,16 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Indicate that Clerk manages the user's credentials.
+     */
+    public function clerk(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'clerk_id' => 'user_'.Str::random(27),
+            'password' => null,
+            'remember_token' => null,
+        ]);
+    }
 }
